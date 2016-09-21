@@ -85,7 +85,7 @@ void MyWindow::initialize()
     mModelViewMatrixLocation = mProgram->uniformLocation("ModelViewMatrix");
     mProjMatrixLocation      = mProgram->uniformLocation("ProjectionMatrix");
 
-    PrepareTexture(GL_TEXTURE0, GL_TEXTURE_2D, "../Media/flower.png", true);
+    PrepareTexture(GL_TEXTURE0, GL_TEXTURE_2D, "../Media/mmwavatar.png", true);
 
     glFrontFace(GL_CCW);
     glCullFace(GL_BACK);
@@ -113,13 +113,13 @@ void MyWindow::CreateVertexBuffer()
     glGenBuffers(1, &handle);
 
     glBindBuffer(GL_ARRAY_BUFFER, handle);
-    glBufferData(GL_ARRAY_BUFFER, numSprites * 3 * sizeof(float), locations, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, numSprites * 3 * sizeof(float), locations, GL_STATIC_DRAW);    
 
     delete[] locations;
 
     // Set up the vertex array object
     mFuncs->glGenVertexArrays(1, &sprites);
-    mFuncs->glBindVertexArray(sprites);
+    mFuncs->glBindVertexArray(sprites);     
 
     glBindBuffer(GL_ARRAY_BUFFER, handle);
     glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, ((GLubyte *)NULL + (0)) );
@@ -166,14 +166,15 @@ void MyWindow::render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);        
 
     mFuncs->glBindVertexArray(sprites);
-
-    mFuncs->glVertexAttribFormat(0, 3, GL_FLOAT, GL_FALSE, 0);
-    mFuncs->glVertexAttribBinding(0, 0);
+    glEnableVertexAttribArray(0);
 
     mProgram->bind();
     {
         glUniformMatrix4fv(mModelViewMatrixLocation, 1, GL_FALSE, MVMatrix.constData());
         glUniformMatrix4fv(mProjMatrixLocation, 1, GL_FALSE, ProjMatrix.constData());
+
+        mProgram->setUniformValue("SpriteTex", 0);
+        mProgram->setUniformValue("Size2",     0.15f);
 
         glDrawArrays(GL_POINTS, 0, numSprites);
 
